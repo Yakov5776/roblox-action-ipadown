@@ -10,8 +10,9 @@ env:
 # Allow Release
 permissions: write-all
 
-on: 
-  workflow_dispatch:
+on:
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   download_ipa:
@@ -78,5 +79,5 @@ jobs:
           artifacts: ipaDown_split\*
 
           allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
+          removeArtifacts: false
+          replacesArtifacts: false
