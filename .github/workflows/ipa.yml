@@ -3,16 +3,15 @@ name: IPA Down
 
 env:
   PYTHONIOENCODING: utf-8
-  APP_NAME: Roblox
   APP_BUNDLE_ID: com.roblox.robloxmobile
-  APP_ID: 431946152
-
+  
 # Allow Release
 permissions: write-all
 
 on:
   schedule:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   download_ipa:
@@ -42,12 +41,12 @@ jobs:
                                                 download -o ipaDown -s http://127.0.0.1:9000 )
 
             echo "Got Downloading JSON result: $output"
-            echo "::set-output name=needIPARelease::1"
-            echo "::set-output name=appName::$(echo "$output" | jq -r '.appName')"
-            echo "::set-output name=appBundleId::$(echo "$output" | jq -r '.appBundleId')"
-            echo "::set-output name=appVer::$(echo "$output" | jq -r '.appVer')"
-            echo "::set-output name=appId::$(echo "$output" | jq -r '.appId')"
-            echo "::set-output name=appVerId::$(echo "$output" | jq -r '.appVerId')"
+            echo "NEED_IPA_RELEASE=1" >> $GITHUB_ENV
+            echo "APP_NAME=$(echo "$output" | jq -r '.appName')" >> $GITHUB_ENV
+            echo "APP_BUNDLE_ID=$(echo "$output" | jq -r '.appBundleId')" >> $GITHUB_ENV
+            echo "APP_VER=$(echo "$output" | jq -r '.appVer')" >> $GITHUB_ENV
+            echo "APP_ID=$(echo "$output" | jq -r '.appId')" >> $GITHUB_ENV
+            echo "APP_VER_ID=$(echo "$output" | jq -r '.appVerId')" >> $GITHUB_ENV
         shell: bash
         
       - name: "Upload package"
@@ -65,17 +64,17 @@ jobs:
       - name: Pushing to release
         uses: ncipollo/release-action@v1
         with:
-          name: "IPADown: ${{ steps.operation.outputs.appName }} - ${{ steps.operation.outputs.appVer }}"
+          name: "IPADown: ${{ env.APP_NAME }} - ${{ env.APP_VER }}"
           body: >-
             ${{ format(fromJSON('"appName: {0}\nappBundleId: {1}\nappVer: {2}\nappId: {3}\nappVerId: {4}\n"'), 
-                  steps.operation.outputs.appName, 
-                  steps.operation.outputs.appBundleId, 
-                  steps.operation.outputs.appVer, 
-                  steps.operation.outputs.appId, 
-                  steps.operation.outputs.appVerId
+                  env.APP_NAME, 
+                  env.APP_BUNDLE_ID, 
+                  env.APP_VER, 
+                  env.APP_ID, 
+                  env.APP_VER_ID
                 ) }}
           commit: ${{ github.sha }}
-          tag: "${{ steps.operation.outputs.appBundleId }}-${{ steps.operation.outputs.appId }}-${{ steps.operation.outputs.appVerId }}"
+          tag: "${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
           artifacts: ipaDown_split\*
 
           allowUpdates: true
