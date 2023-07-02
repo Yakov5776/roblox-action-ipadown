@@ -40,8 +40,6 @@ jobs:
             output=$(python3 ipatool-py/main.py --json lookup -b $APP_BUNDLE_ID -c US \
                                                 download -o ipaDown -s http://127.0.0.1:9000 )
 
-            echo "Got Downloading JSON result: $output"
-            echo "NEED_IPA_RELEASE=1" >> $GITHUB_ENV
             echo "APP_NAME=$(echo "$output" | jq -r '.appName')" >> $GITHUB_ENV
             echo "APP_BUNDLE_ID=$(echo "$output" | jq -r '.appBundleId')" >> $GITHUB_ENV
             echo "APP_VER=$(echo "$output" | jq -r '.appVer')" >> $GITHUB_ENV
