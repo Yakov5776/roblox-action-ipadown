@@ -49,20 +49,21 @@ jobs:
             echo "APP_VER_ID=$(echo "$output" | jq -r '.appVerId')" >> $GITHUB_ENV
         shell: bash
         
+      - name: Check if release exists
+        run: |
+          response=$(curl --silent "https://api.github.com/repos/Yakov5776/roblox-action-ipadown/releases/tags/${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}")
+          id=$(echo "$response" | jq '.id' -r)
+          echo "EXISTING_RELEASE=$id" >> $GITHUB_ENV
+        
       - name: "Upload package"
         uses: NyaMisty/upload-artifact-as-is@master
+        if: env.EXISTING_RELEASE == 'null'
         with:
           path: ipaDown\*
-
-      - name: Split ipa
-        run: |
-          mkdir -p ipaDown_split
-          (cd ipaDown; find . -name "*.ipa" -size +1879048192b -exec split --bytes=1879048192 --suffix-length=3 --numeric-suffix {} ../ipaDown_split/{}. \;)
-          (cd ipaDown; find . -name "*.ipa" -not -size +1879048192b -exec cp -r {} ../ipaDown_split \;)
-        shell: bash
       
       - name: Pushing to release
         uses: ncipollo/release-action@v1
+        if: env.EXISTING_RELEASE == 'null'
         with:
           name: "IPADown: ${{ env.APP_NAME }} - ${{ env.APP_VER }}"
           body: >-
@@ -75,7 +76,7 @@ jobs:
                 ) }}
           commit: ${{ github.sha }}
           tag: "${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
-          artifacts: ipaDown_split\*
+          artifacts: ipaDown\*
 
           allowUpdates: true
           removeArtifacts: false
