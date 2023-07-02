@@ -51,9 +51,11 @@ jobs:
         
       - name: Check if release exists
         run: |
-          response=$(curl --silent "https://api.github.com/repos/Yakov5776/roblox-action-ipadown/releases/tags/${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}")
-          id=$(echo "$response" | jq '.id' -r)
-          echo "EXISTING_RELEASE=$id" >> $GITHUB_ENV
+          $response = Invoke-RestMethod -Method Get -Uri "https://api.github.com/repos/Yakov5776/roblox-action-ipadown/releases/tags/${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
+          $id = $response.id
+          if ($null -eq $id) { $id = "null" }
+          echo "EXISTING_RELEASE=$id" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: pwsh
         
       - name: "Upload package"
         uses: NyaMisty/upload-artifact-as-is@master
