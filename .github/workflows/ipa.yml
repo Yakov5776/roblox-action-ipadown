@@ -23,7 +23,7 @@ jobs:
 
       - name: Setup ipatool-py
         run: |
-          git clone -b itunes_server https://github.com/NyaMisty/ipatool-py
+          git clone -b itunes_server https://github.com/Yakov5776/ipatool-py
           pip3 install -r ipatool-py/requirements.txt
           mkdir -p ipaDown
         shell: bash
@@ -47,6 +47,7 @@ jobs:
             echo "APP_VER=$(echo "$output" | jq -r '.appVer')" >> $GITHUB_ENV
             echo "APP_ID=$(echo "$output" | jq -r '.appId')" >> $GITHUB_ENV
             echo "APP_VER_ID=$(echo "$output" | jq -r '.appVerId')" >> $GITHUB_ENV
+            echo "DOWNLOAD_URL=$(echo "$output" | jq -r '.downloadUrl')" >> $GITHUB_ENV
         shell: bash
         
       - name: Check if release exists
