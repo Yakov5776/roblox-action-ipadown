@@ -51,8 +51,7 @@ jobs:
       - name: Check if release exists
         run: |
           $response = Invoke-RestMethod -Method Get -Uri "https://api.github.com/repos/Yakov5776/roblox-action-ipadown/releases/tags/${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
-          $id = $response.id
-          if ($null -eq $id) { $id = "null" }
+          $id = $response.id ?? "null"
           echo "EXISTING_RELEASE=$id" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
         
