@@ -47,18 +47,7 @@ jobs:
             echo "APP_VER_ID=$(echo "$output" | jq -r '.appVerId')" >> $GITHUB_ENV
             echo "DOWNLOAD_URL=$(echo "$output" | jq -r '.downloadUrl')" >> $GITHUB_ENV
         shell: bash
-        
-      - name: Check if release exists
-        run: |
-          try {
-            $response = Invoke-RestMethod -Method Get -Uri "https://api.github.com/repos/Yakov5776/roblox-action-ipadown/releases/tags/${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
-            $id = $response.id
-          } catch [System.Net.WebException] {
-            $id = "null"
-          }
-          echo "EXISTING_RELEASE=$id" | Out-File -FilePath $env:GITHUB_ENV -Append
-        shell: pwsh
-   
+           
       - name: "Upload package"
         uses: NyaMisty/upload-artifact-as-is@master
         if: env.EXISTING_RELEASE == 'null'
