@@ -29,7 +29,7 @@ jobs:
         shell: bash
 
       - name: Setup iTunes Header Service
-        uses: NyaMisty/actions-iTunes-header@master
+        uses: Yakov5776/actions-iTunes-header@master
         with:
           apple_id: ${{ secrets.APPLE_ID }}
           apple_id_pwd: ${{ secrets.APPLE_ID_PWD }}
