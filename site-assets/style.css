@@ -11,6 +11,11 @@ h1 {
   padding: 30px 0;
 }
 
+p {
+  color: #b9b9b9;
+  margin: unset;
+}
+
 #releases-wrapper {
   display: flex;
   flex-direction: column;
