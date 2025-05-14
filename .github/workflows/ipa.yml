@@ -85,7 +85,22 @@ jobs:
           commit: ${{ github.sha }}
           tag: "${{ env.APP_BUNDLE_ID }}-${{ env.APP_ID }}-${{ env.APP_VER_ID }}"
           artifacts: ipaDown\*
-
           allowUpdates: true
           removeArtifacts: false
           replacesArtifacts: false
+
+      - name: "Setup Node"
+        if: steps.version_check.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Append row to Google Sheet
+        if: steps.version_check.outputs.exists == 'false'
+        run: |
+          npm install googleapis
+          node append2sheets.js
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          APP_VER: ${{ env.APP_VER }}
+          APP_VER_ID: ${{ env.APP_VER_ID }}
