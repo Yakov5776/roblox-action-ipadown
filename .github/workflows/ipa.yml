@@ -47,13 +47,30 @@ jobs:
             echo "APP_VER_ID=$(echo "$output" | jq -r '.appVerId')" >> $GITHUB_ENV
             echo "DOWNLOAD_URL=$(echo "$output" | jq -r '.downloadUrl')" >> $GITHUB_ENV
         shell: bash
+
+      - name: Check if version already released
+        id: version_check
+        run: |
+          tag_name="${APP_BUNDLE_ID}-${APP_ID}-${APP_VER_ID}"
+          echo "Checking for tag $tag_name"
+          if gh release view "$tag_name" > /dev/null 2>&1; then
+            echo "Release already exists."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
            
       - name: "Upload package"
+        if: steps.version_check.outputs.exists == 'false'
         uses: NyaMisty/upload-artifact-as-is@master
         with:
           path: ipaDown\*
       
       - name: Pushing to release
+        if: steps.version_check.outputs.exists == 'false'
         uses: ncipollo/release-action@v1.14.0
         with:
           name: "IPADown: ${{ env.APP_NAME }} - ${{ env.APP_VER }}"
