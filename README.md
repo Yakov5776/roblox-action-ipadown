@@ -1,3 +1,11 @@
+# ⚠️ Deprecated
+
+**As of October 27th 2025:** This repo is no longer used and the scheduled workflow has been disabled in favor of [Roblox-DeployHistory-Updates/ios-runner](https://github.com/Roblox-DeployHistory-Updates/ios-runner) which now also supports automatic decryption.
+
+A new update will be posted in the future containing all the decrypted IPAs along with the repository being put into archive mode.
+
+
+## Original Readme:
 # roblox-action-ipadown
 
 This is a server powered by GitHub actions which automates Roblox IPA archiving from Apple servers.
